@@ -2,7 +2,7 @@ FROM certbot/dns-cloudxns:latest
 
 MAINTAINER eastpiger
 
-ENTRYPOINT [ "/bin/sh -c '(/opt/certbot/makecfg.sh)& certbot'" ]
+ENTRYPOINT ["docker-entrypoint.sh"]
 EXPOSE 80 443
 VOLUME /etc/letsencrypt /var/lib/letsencrypt
 WORKDIR /opt/certbot
@@ -16,7 +16,8 @@ ENV HOOK_LABEL_VALUE="true"
 ENV CLOUDXNS_API_KEY=""
 ENV CLOUDXNS_SECRET_KEY=""
 
-COPY makecfg.sh ./
+RUN apk --update add bash
 COPY entry.sh restart.py hook/
+COPY docker-entrypoint.sh /usr/local/bin/
 
-RUN chmod +x makecfg.sh hook/entry.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh hook/entry.sh
